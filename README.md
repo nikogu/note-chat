@@ -22,6 +22,7 @@ Open your chrome browser load the packages.
 
 ```bash
 $ cd note-chat-server
+$ export OPENAI_API_KEY=[your key]
 $ pip install -r requirements.txt
 $ flask run
 ```
