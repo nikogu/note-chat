@@ -1,0 +1,1 @@
+# Note Chat Client Extension
