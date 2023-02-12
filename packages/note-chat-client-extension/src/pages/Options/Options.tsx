@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, ReactElement, FC } from 'react';
+import React, { useEffect, useState, useCallback, ReactElement, FC, useRef } from 'react';
 import { Button, Input, Row, Col, message, Spin, Tag } from 'antd';
 // import { LoadingOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
@@ -21,8 +21,8 @@ const Container = styled.div`
 
 const MessageLoadingWrapper = styled.div`
   position: absolute;
-  bottom: 4px;
-  left: 0px;
+  top: 0px;
+  right: 0px;
 `;
 
 const MessageBox = styled.div`
@@ -79,6 +79,7 @@ const Message: FC<IMessage> = ({ type, content, source }) => {
 }
 
 const Options = () => {
+  const boxRef = useRef() as React.MutableRefObject<HTMLInputElement>;;
   const [text, setText] = useState('');
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [messageLoading, setMessageLoading] = useState(false);
@@ -90,11 +91,18 @@ const Options = () => {
     }]);
   }, [])
 
+  useEffect(() => {
+    if (boxRef.current) {
+      console.log('boxRef.current', boxRef.current, boxRef.current.scrollTop, boxRef.current?.scrollHeight);
+      boxRef.current.scrollTop = boxRef.current.scrollHeight || 999;
+    }
+  }, [messages]);
+
   const handleSend = useCallback(async () => {
     if (messageLoading) return;
     try {
       setMessageLoading(true);
-      let newMessages: IMessage[] = [...messages, {
+      const newMessages: IMessage[] = [...messages, {
         type: 'user',
         content: text,
       }];
@@ -118,7 +126,7 @@ const Options = () => {
     } finally {
       setMessageLoading(false);
     }
-  }, [text, messages, messageLoading]);
+  }, [text, messageLoading, setMessages]);
 
   const handleTextChange = (e: any) => {
     setText(e?.target?.value);
@@ -131,21 +139,23 @@ const Options = () => {
   }
 
   return <Container>
-    <MessageBox>
-      {
-        messageLoading && <MessageLoadingWrapper><Spin size="small" /></MessageLoadingWrapper>
-      }
+    <MessageBox ref={boxRef}>
       {
         messages.map((msg, i) => <Message key={i} {...msg} />)
       }
     </MessageBox>
-    <Tag style={{ marginBottom: 4 }}>`Command + Enter` can send message quickly :D</Tag>
-    <Input.TextArea onKeyDown={handleEnter} value={text} rows={4} onChange={handleTextChange} />
-    <Row justify="end">
-      <Col>
-        <Button loading={messageLoading} onClick={handleSend} style={{ marginTop: 8 }} type="primary">Send</Button>
-      </Col>
-    </Row>
+    <div style={{ position: 'relative' }}>
+      {
+        messageLoading && <MessageLoadingWrapper><Spin size="small" /></MessageLoadingWrapper>
+      }
+      <Tag style={{ marginBottom: 4 }}>`Command + Enter` can send message quickly :D</Tag>
+      <Input.TextArea onKeyDown={handleEnter} value={text} rows={4} onChange={handleTextChange} />
+      <Row justify="end">
+        <Col>
+          <Button loading={messageLoading} onClick={handleSend} style={{ marginTop: 8 }} type="primary">Send</Button>
+        </Col>
+      </Row>
+    </div>
   </Container >
 };
 
