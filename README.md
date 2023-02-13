@@ -3,6 +3,7 @@
 Note Chat is a note-taking AI assistant based on LLMs
 
 Based on:
+- [gpt-index](https://github.com/jerryjliu/gpt_index)
 - [notion-qa](https://github.com/hwchase17/notion-qa)
 - [chrome-extension-boilerplate-react](https://github.com/lxieyang/chrome-extension-boilerplate-react)
 - [flask](https://flask.palletsprojects.com/en/2.2.x/)
